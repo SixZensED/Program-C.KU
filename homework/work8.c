@@ -5,6 +5,8 @@ void user(char *name,int *age) {
 	printf("Name : %s\nGroup : ",name);
 	if (year >= 0 && year <= 2) {
 		printf("(Baby)\n");
+	} else if (year >= 3 && year <= 11) {
+		printf("(Child)\n");
 	} else if (year >= 12 && year <= 19) {
 		printf("(Teen)\n");
 	} else if (year >= 20 && year <= 39) {
