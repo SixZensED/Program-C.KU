@@ -1,62 +1,42 @@
 #include <iostream>
 #include <string>
+using namespace std;
 
-class Shape {
+class Monster {
 protected:
-    std::string color;
+    string name;
 
 public:
-    Shape(const std::string& color) : color(color) {}
+    virtual string attack() = 0;
+};
 
-    virtual double getArea() const = 0;
-
-    virtual std::string toString() const {
-        return "Color: " + color;
+class FireMonster : public Monster {
+public:
+    string attack() {
+        return "FireMonster attacks with fire!";
     }
 };
 
-class Rectangle : public Shape {
-private:
-    int length;
-    int width;
-
+class WaterMonster : public Monster {
 public:
-    Rectangle(const std::string& color, int length, int width)
-        : Shape(color), length(length), width(width) {}
-
-    double getArea() const override {
-        return static_cast<double>(length * width);
-    }
-
-    std::string toString() const override {
-        return "Rectangle - " + Shape::toString() + ", Length: " + std::to_string(length) + ", Width: " + std::to_string(width);
+    string attack() {
+        return "WaterMonster attacks with water!";
     }
 };
 
-class Triangle : public Shape {
-private:
-    int base;
-    int height;
-
+class StoneMonster : public Monster {
 public:
-    Triangle(const std::string& color, int base, int height)
-        : Shape(color), base(base), height(height) {}
-
-    double getArea() const override {
-        return 0.5 * base * height;
-    }
-
-    std::string toString() const override {
-        return "Triangle - " + Shape::toString() + ", Base: " + std::to_string(base) + ", Height: " + std::to_string(height);
+    string attack() {
+        return "StoneMonster attacks with stones!";
     }
 };
 
 int main() {
-    Rectangle rectangle("Blue", 5, 10);
-    Triangle triangle("Red", 8, 6);
+    FireMonster fire; WaterMonster water; StoneMonster stone;
 
-    std::cout << rectangle.toString() << ", Area: " << rectangle.getArea() << std::endl;
-    std::cout << triangle.toString() << ", Area: " << triangle.getArea() << std::endl;
+    std::cout << fire.attack() << std::endl;
+    std::cout << water.attack() << std::endl;
+    std::cout << stone.attack() << std::endl;
 
     return 0;
 }
