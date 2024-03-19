@@ -2,136 +2,92 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_EMPLOYEES 100
-#define FILENAME "employees.txt"
-
-struct Employee {
+typedef struct {
     char name[50];
-    int id;
+    int employeeID;
     float salary;
-};
+} Employee;
 
-void add(struct Employee employees[], int *num_employees) {
-    if (*num_employees < MAX_EMPLOYEES) {
-        struct Employee newEmployee;
+void addEmployee(FILE *file) {
+    Employee newEmployee;
+    printf("Enter employee name: ");
+    scanf("%s", newEmployee.name);
+    printf("Enter employee ID: ");
+    scanf("%d", &newEmployee.employeeID);
+    printf("Enter employee salary: ");
+    scanf("%f", &newEmployee.salary);
 
-        printf("Enter employee name: ");
-        scanf(" %[^\n]", newEmployee.name);
-
-        printf("Enter employee ID: ");
-        scanf("%d", &newEmployee.id);
-
-        printf("Enter employee salary: ");
-        scanf("%f", &newEmployee.salary);
-
-        employees[*num_employees] = newEmployee;
-        (*num_employees)++;
-
-        printf("Employee added successfully.\n");
-    } else {
-        printf("Cannot add more employees. Maximum limit reached.\n");
-    }
+    fprintf(file, "%s %d %.2f\n", newEmployee.name, newEmployee.employeeID, newEmployee.salary);
 }
 
-void view(struct Employee employees[], int num_employees) {
-    if (num_employees == 0) {
-        printf("No employees to display.\n");
-    } else {
-        printf("List of employees:\n");
-        for (int i = 0; i < num_employees; i++) {
-            printf("Employee %d:\n", i + 1);
-            printf("Name: %s\n", employees[i].name);
-            printf("ID: %d\n", employees[i].id);
-            printf("Salary: %.2f\n", employees[i].salary);
-            printf("\n");
-        }
+void displayAllEmployees(FILE *file) {
+    Employee currentEmployee;
+    rewind(file);
+    printf("All employees:\n");
+    while (fscanf(file, "%s %d %f", currentEmployee.name, &currentEmployee.employeeID, &currentEmployee.salary) != EOF) {
+        printf("Name: %s, ID: %d, Salary: %.2f\n", currentEmployee.name, currentEmployee.employeeID, currentEmployee.salary);
     }
+    printf("\n");
 }
 
-void search(struct Employee employees[], int num_employees) {
-    int search_id;
+void searchEmployee(FILE *file) {
+    int searchID;
     printf("Enter employee ID to search: ");
-    scanf("%d", &search_id);
-
+    scanf("%d", &searchID);
+    Employee currentEmployee;
+    rewind(file); 
     int found = 0;
-    for (int i = 0; i < num_employees; i++) {
-        if (employees[i].id == search_id) {
+    while (fscanf(file, "%s %d %f", currentEmployee.name, &currentEmployee.employeeID, &currentEmployee.salary) != EOF) {
+        if (currentEmployee.employeeID == searchID) {
             printf("Employee found:\n");
-            printf("Name: %s\n", employees[i].name);
-            printf("ID: %d\n", employees[i].id);
-            printf("Salary: %.2f\n", employees[i].salary);
+            printf("Name: %s, ID: %d, Salary: %.2f\n", currentEmployee.name, currentEmployee.employeeID, currentEmployee.salary);
             found = 1;
             break;
         }
     }
-
     if (!found) {
-        printf("Employee with ID %d not found.\n", search_id);
+        printf("Employee with ID %d not found.\n", searchID);
     }
-}
-
-void save(struct Employee employees[], int num_employees) {
-    FILE *file = fopen(FILENAME, "w");
-    if (file == NULL) {
-        printf("Error opening file for writing.\n");
-        return;
-    }
-
-    for (int i = 0; i < num_employees; i++) {
-        fprintf(file, "%s,%d,%.2f\n", employees[i].name, employees[i].id, employees[i].salary);
-    }
-
-    fclose(file);
-}
-
-void load(struct Employee employees[], int *num_employees) {
-    FILE *file = fopen(FILENAME, "r");
-    if (file == NULL) {
-        printf("Error opening file for reading.\n");
-        return;
-    }
-
-    while (!feof(file) && *num_employees < MAX_EMPLOYEES) {
-        fscanf(file, " %[^,],%d,%f\n", employees[*num_employees].name, &employees[*num_employees].id, &employees[*num_employees].salary);
-        (*num_employees)++;
-    }
-
-    fclose(file);
+    printf("\n");
 }
 
 int main() {
-    struct Employee employees[MAX_EMPLOYEES];
-    int num_employees = 0;
+    FILE *file = fopen("employees.txt", "a+");
+
+    if (file == NULL) {
+        printf("Error opening file!\n");
+        return 1;
+    }
+
     int choice;
-
-    load(employees, &num_employees);
-
     do {
-        printf("\nEmployee Management System\n");
-        printf("1. Add Employee\n");
-        printf("2. View All Employees\n");
-        printf("3. Search Employee by ID\n");
-        printf("4. Save Employees to File\n");
-        printf("5. Exit\n");
+        printf("Menu:\n");
+        printf("1. Add an employee\n");
+        printf("2. Display all employees\n");
+        printf("3. Search for an employee by ID\n");
+        printf("4. Exit\n");
         printf("Enter your choice: ");
         scanf("%d", &choice);
 
-        switch (choice) {
+        switch(choice) {
             case 1:
-                add(employees, &num_employees);break;
+                addEmployee(file);
+                break;
             case 2:
-                view(employees, num_employees);break;
+                displayAllEmployees(file);
+                break;
             case 3:
-                search(employees, num_employees);break;
+                searchEmployee(file);
+                break;
             case 4:
-                save(employees, num_employees);
-                printf("Employees saved to file successfully.\n");break;
-            case 5:
-                printf("Exiting program.\n");break;
+                printf("Exiting program.\n");
+                break;
             default:
-                printf("Invalid choice. Please enter a number between 1 and 5.\n");
+                printf("Invalid choice. Please enter again.\n");
         }
-    } while (choice != 5);
+    } while(choice < 1 || choice > 4);
+
+    fclose(file); 
 
     return 0;
 }
