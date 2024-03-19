@@ -2,66 +2,59 @@
 #include <stdlib.h>
 
 typedef struct {
-    char n[50];
-    int id;
-    float s;
-} Employee;
-void addEmployee(FILE *file) {
-    Employee newEmployee;
-    printf("Enter employee name: ");
-    scanf("%s", newEmployee.n);
-    printf("Enter employee ID: ");
-    scanf("%d", &newEmployee.id);
-    printf("Enter employee salary: ");
-    scanf("%f", &newEmployee.s);
-    fprintf(file, "%s %d %.2f\n", newEmployee.n, newEmployee.id, newEmployee.s);
+	char name[50];
+	int id;
+	float salary;
+} employee;
+
+void add(FILE *file) {
+	employee add_emp;
+	printf("enter name : ");
+	scanf("%s",add_emp.name);
+	printf("enter id : ");
+	scanf("%d",&add_emp.id);
+	printf("enter salary : ");
+	scanf("%f",&add_emp.salary);
+	fprintf(file,"%s %d %f",add_emp.name,add_emp.id,add_emp.salary);
 }
-void displayAllEmployees(FILE *file) {
-    Employee currentEmployee;
-    printf("All employees:\n");
-    while (fscanf(file, "%s %d %f", currentEmployee.n, &currentEmployee.id, &currentEmployee.s) != EOF) {
-        printf("Name: %s, ID: %d, Salary: %.2f\n", currentEmployee.n, currentEmployee.id, currentEmployee.s);
-    }
+
+void show(FILE *file) {
+	employee show_emp;
+	while (fscanf(file,"%s %d %f",show_emp.name,&show_emp.id,&show_emp.salary) != EOF) {
+		printf("name : %s id : %d salary : %f\n",show_emp.name,show_emp.id,show_emp.salary);
+	}
 }
-void searchEmployee(FILE *file) {
-    int searchID;
-    printf("Enter employee ID to search: ");
-    scanf("%d", &searchID);
-    Employee currentEmployee;
-    while (fscanf(file, "%s %d %f", currentEmployee.n, &currentEmployee.id, &currentEmployee.s) != EOF) {
-        if (currentEmployee.id == searchID) {
-            printf("Name: %s, ID: %d, Salary: %.2f\n", currentEmployee.n, currentEmployee.id, currentEmployee.s);
-        }
-    }
+
+void search(FILE *file) {
+	employee search_emp;
+	int search_id;
+	printf("search id : ");
+	scanf("%d",&search_id);
+	while (fscanf(file,"%s %d %f",search_emp.name,&search_emp.id,&search_emp.salary) != EOF) {
+		if (search_emp.id == search_id) {
+			printf("name : %s id : %d salary : %f\n",search_emp.name,search_emp.id,search_emp.salary);
+		}
+	}
 }
+
 int main() {
-    FILE *file = fopen("employees.txt", "a+");
-    if (file == NULL) {
-        printf("Error opening file!\n");
-        return 1;
-    }
-    int choice;
-        printf("1. Add an employee\n");
-        printf("2. Display all employees\n");
-        printf("3. Search for an employee by ID\n");
-        printf("4. Exit\n");
-        printf("Enter your choice: ");
-        scanf("%d", &choice);
-        switch(choice) {
-            case 1:
-                addEmployee(file);
-                break;
-            case 2:
-                displayAllEmployees(file);
-                break;
-            case 3:
-                searchEmployee(file);
-                break;
-            case 4:
-                printf("Exiting program.\n");
-                break;
-            default:
-                printf("Invalid choice. Please enter again.\n");
-        }
-    return 0;
+	FILE * file = fopen("employee_test.txt","a+");
+	
+	if (file == NULL) {
+		return 0;
+	} else {
+		int choose;
+		printf("Menu \n1). Add Employee\n2). Show All Employee\n3). Search Employee With id\n Choose :");
+		scanf("%d",&choose);
+		switch(choose) {
+			case 1 : add(file);
+			break;
+			case 2 : show(file);
+			break;
+			case 3 : search(file);
+			break;
+			default : printf("Please Select (1/2/3)");
+		}
+	}
+	return 0;
 }
